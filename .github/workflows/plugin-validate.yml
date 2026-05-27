@@ -51,12 +51,18 @@ jobs:
           claude plugin validate .claude-plugin/marketplace.json || fail=1
           echo "::endgroup::"
 
-          while IFS= read -r manifest; do
-            plugin_dir="$(dirname "$(dirname "$manifest")")"
+          while IFS= read -r source; do
+            plugin_dir="${source#./}"
             echo "::group::$plugin_dir"
             claude plugin validate "$plugin_dir" || fail=1
             echo "::endgroup::"
-          done < <(find plugins -path '*/.claude-plugin/plugin.json' | sort)
+          done < <(python3 - <<'PY'
+          import json
+          with open(".claude-plugin/marketplace.json") as f:
+              sources = sorted({plugin["source"] for plugin in json.load(f)["plugins"]})
+          print("\n".join(sources))
+          PY
+          )
 
           if [ "$fail" -ne 0 ]; then
             echo "::error::plugin validation failed — see grouped logs above"

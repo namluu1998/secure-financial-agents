@@ -25,7 +25,7 @@ jobs:
       - name: Test handoff parsing and secret redaction
         run: python3 scripts/test_security_fixes.py
 
-      - name: Confirm schema-protected cookbook deployment fails closed
+      - name: Confirm untrusted schema boundary fails closed
         run: |
           set -euo pipefail
           if scripts/deploy-managed-agent.sh gl-reconciler >out.txt 2>&1; then
@@ -33,3 +33,13 @@ jobs:
             exit 1
           fi
           grep -q "refusing unsafe direct deployment" out.txt
+
+      - name: Confirm trusted MCP schemas are not blocked as untrusted inputs
+        run: |
+          set -euo pipefail
+          if scripts/deploy-managed-agent.sh pitch-agent >out.txt 2>&1; then
+            echo "::error::unexpected deployment without credentials"
+            exit 1
+          fi
+          ! grep -q "refusing unsafe direct deployment" out.txt
+          grep -q "ANTHROPIC_API_KEY must be set" out.txt

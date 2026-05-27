@@ -2,7 +2,7 @@
 
 Every agent in this repo ships **two ways**: as a Cowork plugin your analysts install today (see the vertical directories at repo root), and as a Claude Managed Agent template your platform team deploys behind your own workflow engine. **Same agent, same skills — pick your surface.** Each directory below is a deploy manifest that references the canonical system prompt and skills from the matching plugin, so there is one source of truth.
 
-Run `../scripts/deploy-managed-agent.sh <slug> --dry-run` to inspect the resolved config. Live deployment fails closed for templates containing `output_schema`, because the Managed Agents API does not enforce this boundary; deploy those templates only through an orchestration layer that invokes `../scripts/validate.py` between untrusted readers and privileged agents. Each template ships with [`steering-examples.json`](./pitch-agent/steering-examples.json) and a per-agent README covering its security tier and handoffs.
+Run `../scripts/deploy-managed-agent.sh <slug> --dry-run` to inspect the resolved config. Live deployment fails closed for the explicitly listed templates whose schema-bound readers process untrusted content, because the Managed Agents API does not enforce that security boundary; deploy those templates only through an orchestration layer that invokes `../scripts/validate.py` between untrusted readers and privileged agents. Each template ships with [`steering-examples.json`](./pitch-agent/steering-examples.json) and a per-agent README covering its security tier and handoffs.
 
 | Agent | Vertical plugin | Cowork tile | CMA steering event | Leaf workers |
 |---|---|---|---|---|

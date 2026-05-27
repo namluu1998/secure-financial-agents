@@ -28,8 +28,8 @@ mcp_servers: []
 skills: []
 callable_agents: []
 
-# Not an API field — consumed by scripts/validate.py, which validates worker
-# output against this schema before returning it to the orchestrator. String
+# Not an API field — your orchestration layer must pass worker output to
+# scripts/validate.py before returning it to the orchestrator. String
 # fields are length-capped and character-class-restricted so injected
 # instructions cannot survive intact.
 output_schema:

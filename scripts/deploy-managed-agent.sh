@@ -23,11 +23,21 @@ API="${ANTHROPIC_API_BASE:-https://api.anthropic.com}"
 
 [[ -f "$DIR/agent.yaml" ]] || { echo "no manifest at $DIR/agent.yaml" >&2; exit 1; }
 
-# Fail closed before requesting credentials or posting resources: posting these
-# manifests directly would silently discard the schema boundary and allow
-# untrusted document content into privileged agents.
-if [[ $DRY_RUN -ne 1 ]] && grep -Rqs '^output_schema:' "$DIR"; then
-  echo "refusing unsafe direct deployment: $ROLE contains reader output_schema blocks" >&2
+# Fail closed before requesting credentials or posting resources for cookbooks
+# whose readers handle untrusted external content. Keep this explicit instead
+# of inferring a security boundary from prompt wording.
+requires_validating_harness() {
+  case "$1" in
+    earnings-reviewer|gl-reconciler|kyc-screener|market-researcher|meeting-prep-agent|month-end-closer|statement-auditor|valuation-reviewer)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+if [[ $DRY_RUN -ne 1 ]] && requires_validating_harness "$ROLE"; then
+  echo "refusing unsafe direct deployment: $ROLE contains an untrusted reader output_schema boundary" >&2
   echo "The Managed Agents API does not enforce those schemas. Route reader output" >&2
   echo "through scripts/validate.py in your orchestration layer before deployment." >&2
   exit 1

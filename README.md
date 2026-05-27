@@ -86,7 +86,7 @@ scripts/deploy-managed-agent.sh gl-reconciler
 
 Each template under [`managed-agent-cookbooks/`](./managed-agent-cookbooks) references the same system prompt and skills as its plugin counterpart. The deploy script resolves file references, uploads skills, creates leaf-worker subagents, and POSTs the orchestrator to `/v1/agents`. See [`scripts/orchestrate.py`](./scripts/orchestrate.py) for a reference event loop that routes `handoff_request` events between agents via your own orchestration layer.
 
-> **Security boundary:** templates containing `output_schema` read untrusted or externally supplied content. The Managed Agents API does not enforce these schemas, so `deploy-managed-agent.sh` rejects direct live deployment of those templates. Deploy them only through an orchestration layer that runs `scripts/validate.py` between each reader and privileged downstream agent.
+> **Security boundary:** templates whose schema-bound readers process untrusted or externally supplied content cannot be safely posted directly, because the Managed Agents API does not enforce those schemas. `deploy-managed-agent.sh` explicitly rejects direct live deployment of those templates. Deploy them only through an orchestration layer that runs `scripts/validate.py` between each reader and privileged downstream agent.
 
 > **Research Preview:** subagent delegation (`callable_agents`) is a preview capability. See per-agent READMEs for security and handoff guidance.
 

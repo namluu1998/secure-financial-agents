@@ -100,5 +100,36 @@ class ManifestLoggingRegressionTests(unittest.TestCase):
             self.assertTrue(output.exists())
 
 
+class DeploymentBoundaryScopeTests(unittest.TestCase):
+    def test_explicit_guard_list_matches_schema_bound_untrusted_workers(self) -> None:
+        expected = {
+            "earnings-reviewer",
+            "gl-reconciler",
+            "kyc-screener",
+            "market-researcher",
+            "meeting-prep-agent",
+            "month-end-closer",
+            "statement-auditor",
+            "valuation-reviewer",
+        }
+        detected = set()
+        cookbooks = ROOT / "managed-agent-cookbooks"
+        for cookbook in cookbooks.iterdir():
+            subagents = cookbook / "subagents"
+            if not subagents.is_dir():
+                continue
+            for worker in subagents.glob("*.yaml"):
+                text = worker.read_text(encoding="utf-8")
+                if "\noutput_schema:" in text and "UNTRUSTED" in text.upper():
+                    detected.add(cookbook.name)
+                    break
+        self.assertEqual(detected, expected)
+        self.assertNotIn("pitch-agent", detected)
+        self.assertNotIn("model-builder", detected)
+        deploy_script = (ROOT / "scripts" / "deploy-managed-agent.sh").read_text(encoding="utf-8")
+        for role in expected:
+            self.assertIn(role, deploy_script)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
