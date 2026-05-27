@@ -1,0 +1,15 @@
+{
+  "name": "secure-financial-agents-marketplace",
+  "owner": {
+    "name": "namluu1998"
+  },
+  "plugins": [
+    {
+      "name": "secure-financial-agents",
+      "displayName": "Secure Financial Agents",
+      "source": "./",
+      "description": "Security-first controls and review workflows for financial-services agents handling untrusted documents and sensitive configuration."
+    }
+  ]
+}
+

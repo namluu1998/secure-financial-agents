@@ -1,0 +1,9 @@
+{
+  "name": "secure-financial-agents",
+  "version": "0.1.0",
+  "description": "Security-first controls and review workflows for financial-services agents handling untrusted documents and sensitive configuration.",
+  "author": {
+    "name": "namluu1998"
+  }
+}
+

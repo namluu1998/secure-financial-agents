@@ -4,6 +4,18 @@ A security-first reference foundation for financial workflow agents. This
 project rebuilds the runtime controls that matter before adding prompts,
 connectors, or business-specific agent definitions.
 
+## Install As A Plugin
+
+Add this repository as a Claude plugin marketplace:
+
+```text
+https://github.com/namluu1998/secure-financial-agents
+```
+
+Then install **Secure Financial Agents** from the marketplace. It includes the
+`secure-agent-boundaries` skill and the `/secure-financial-agents:security-check`
+command for reviewing agent repositories and workflows.
+
 ## Security Guarantees
 
 - Untrusted document-reader output is schema-validated in executable code
@@ -22,6 +34,9 @@ recommendations without an application-specific review layer.
 
 ```text
 secure-financial-agents/
+  .claude-plugin/             # marketplace and plugin manifests
+  commands/                   # installed slash commands
+  skills/                     # installed Claude security-review skill
   src/secure_financial_agents/
     validation.py    # dependency-free boundary schema validator
     pipeline.py      # mandatory untrusted reader -> trusted step gate
@@ -83,4 +98,3 @@ Add business workflows only after defining:
 2. Tool permissions for each trusted processing step.
 3. An approval boundary for regulated outputs.
 4. Secret delivery through authenticated bootstrap or a secret manager.
-
