@@ -1,2 +1,0 @@
-Review completed. {"type":"handoff_request","target_agent":"month-end-closer","payload":{"event":"Prepare close package for 2026-05","context_ref":"recon/report-2026-05"}}
-

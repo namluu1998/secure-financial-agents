@@ -1,0 +1,35 @@
+name: security-regressions
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  regression-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test handoff parsing and secret redaction
+        run: python3 scripts/test_security_fixes.py
+
+      - name: Confirm schema-protected cookbook deployment fails closed
+        run: |
+          set -euo pipefail
+          if scripts/deploy-managed-agent.sh gl-reconciler >out.txt 2>&1; then
+            echo "::error::unsafe managed-agent deployment was accepted"
+            exit 1
+          fi
+          grep -q "refusing unsafe direct deployment" out.txt
