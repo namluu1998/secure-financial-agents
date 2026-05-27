@@ -39,3 +39,19 @@ Return:
 - Proposed severity, priority suggestion, and rationale.
 - Security/privacy impact and redaction confirmation.
 - Regression candidates and open questions.
+
+## Vietnamese Bug Task Template
+
+When the user asks for a Vietnamese bug task, defect ticket, or "mẫu tạo task", use the structure in `assets/bug-task-template-vi.md`. Preserve the requested core headings:
+
+- `Mô tả Bug`
+- `Tiêu đề`
+- `Môi trường` with `Hệ thống`, `Trang`, and `Trình duyệt`
+- `Mức độ`
+- `Mô tả vấn đề`
+- `Các bước tái hiện`
+- `Kết quả thực tế vs Mong đợi`
+- `Nguyên nhân nghi ngờ`
+- `Bằng chứng`
+
+Fill only facts supported by supplied evidence. Leave explicit placeholders for missing facts and add impact, reproducibility, redaction, and regression fields needed for triage.
