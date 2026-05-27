@@ -1,0 +1,8 @@
+{
+  "name": "quality-engineering",
+  "version": "0.1.0",
+  "description": "Quality engineering workflows: risk-based test planning, test case design, API testing, defect reporting, and release readiness",
+  "author": {
+    "name": "namluu1998"
+  }
+}

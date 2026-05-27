@@ -115,6 +115,7 @@ Start with **financial-analysis** — it carries the shared modeling skills and 
 | **[wealth-management](./plugins/vertical-plugins/wealth-management)** | Client reviews, financial plans, rebalancing, reporting, TLH. |
 | **[fund-admin](./plugins/vertical-plugins/fund-admin)** | GL recon, break tracing, accruals, roll-forwards, variance commentary, NAV tie-out. |
 | **[operations](./plugins/vertical-plugins/operations)** | KYC document parsing and rules-grid evaluation. |
+| **[quality-engineering](./plugins/vertical-plugins/quality-engineering)** | QC test planning, test case design, API testing, defect reporting, and release gates. |
 | **[lseg](./plugins/partner-built/lseg)** *(partner)* | Bond RV, swap curves, FX carry, options vol, macro-rates monitoring on LSEG data. |
 | **[sp-global](./plugins/partner-built/spglobal)** *(partner)* | Tear sheets, earnings previews, funding digests on S&P Capital IQ. |
 
@@ -247,6 +248,19 @@ These are reference templates — they get better when you tune them to how your
 | client-report | `/client-report` | Client-facing performance reports |
 | investment-proposal | `/proposal` | Proposals for prospective clients |
 | tax-loss-harvesting | `/tlh` | Identify TLH opportunities and manage wash sales |
+
+</details>
+
+<details>
+<summary><b>quality-engineering</b> - QC planning, execution, and release readiness</summary>
+
+| Skill | Command | Description |
+|---|---|---|
+| test-strategy | `/test-plan` | Risk-based test plans, scope, coverage, and exit criteria |
+| test-case-design | `/test-cases` | Reproducible functional, negative, boundary, and regression cases |
+| api-testing | `/api-test` | Contract, authorization, validation, reliability, and privacy API checks |
+| bug-reporting | `/bug-report` | Evidence-based defect reports and triage guidance |
+| release-quality-gate | `/release-gate` | Evidence-led go/no-go quality recommendation |
 
 </details>
 

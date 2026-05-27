@@ -47,6 +47,12 @@
       "description": "Operational workflows: KYC document parsing and rules-grid evaluation"
     },
     {
+      "name": "quality-engineering",
+      "displayName": "Quality Engineering",
+      "source": "./plugins/vertical-plugins/quality-engineering",
+      "description": "QC and quality engineering workflows: test planning, test case design, API testing, defect triage, and release quality gates"
+    },
+    {
       "name": "pitch-agent",
       "displayName": "Pitch Agent",
       "source": "./plugins/agent-plugins/pitch-agent",
