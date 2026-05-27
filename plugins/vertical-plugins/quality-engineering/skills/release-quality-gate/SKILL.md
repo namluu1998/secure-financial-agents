@@ -1,6 +1,6 @@
 ---
 name: release-quality-gate
-description: Assess release readiness from test execution, defects, risk acceptance, security checks, and operational evidence. Use for go/no-go reviews, regression summaries, UAT sign-off support, release quality reports, or production deployment recommendations.
+description: Assess release readiness from test execution, defects, risk acceptance, security checks, and operational evidence. Use for go or no-go reviews, regression summaries, UAT sign-off support, release quality reports, or production deployment recommendations.
 ---
 
 # Evaluate a Release Quality Gate

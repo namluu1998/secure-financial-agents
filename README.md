@@ -260,7 +260,7 @@ These are reference templates — they get better when you tune them to how your
 | test-case-design | `/test-cases` | Reproducible functional, negative, boundary, and regression cases |
 | api-testing | `/api-test` | Contract, authorization, validation, reliability, and privacy API checks |
 | bug-reporting | `/bug-report` | Evidence-based defect reports and triage guidance |
-| release-quality-gate | `/release-gate` | Evidence-led go/no-go quality recommendation |
+| release-quality-gate | `/release-gate` | Evidence-led go or no-go quality recommendation |
 
 </details>
 
