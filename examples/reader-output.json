@@ -1,0 +1,14 @@
+{
+  "asset_class": "equities",
+  "status": "breaks_found",
+  "breaks": [
+    {
+      "account": "11420",
+      "gl_balance": 250000.0,
+      "sub_balance": 249900.0,
+      "variance": 100.0,
+      "evidence_refs": ["statement/page-2/row-14"]
+    }
+  ]
+}
+

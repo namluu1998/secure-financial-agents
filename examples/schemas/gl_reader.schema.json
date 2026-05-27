@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "required": ["asset_class", "status", "breaks"],
+  "additionalProperties": false,
+  "properties": {
+    "asset_class": {
+      "type": "string",
+      "maxLength": 32,
+      "pattern": "^[A-Za-z0-9_-]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["clean", "breaks_found", "error"]
+    },
+    "breaks": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "required": ["account", "gl_balance", "sub_balance", "variance"],
+        "additionalProperties": false,
+        "properties": {
+          "account": {
+            "type": "string",
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9._:-]+$"
+          },
+          "gl_balance": { "type": "number" },
+          "sub_balance": { "type": "number" },
+          "variance": { "type": "number" },
+          "evidence_refs": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "type": "string",
+              "maxLength": 256,
+              "pattern": "^[A-Za-z0-9 ._/:#-]+$"
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

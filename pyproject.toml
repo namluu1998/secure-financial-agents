@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "secure-financial-agents"
+version = "0.1.0"
+description = "Security-first reference foundation for financial workflow agents."
+requires-python = ">=3.11"
+
+[project.scripts]
+secure-financial-agents = "secure_financial_agents.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
