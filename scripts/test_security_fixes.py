@@ -131,5 +131,26 @@ class DeploymentBoundaryScopeTests(unittest.TestCase):
             self.assertIn(role, deploy_script)
 
 
+class HarnessValidatorRegressionTests(unittest.TestCase):
+    def test_validate_accepts_utf8_bom_json(self) -> None:
+        old_jsonschema = sys.modules.get("jsonschema")
+        sys.modules["jsonschema"] = types.SimpleNamespace()
+        with tempfile.TemporaryDirectory() as directory:
+            try:
+                spec = importlib.util.spec_from_file_location("validate_under_test", ROOT / "scripts" / "validate.py")
+                module = importlib.util.module_from_spec(spec)
+                assert spec.loader is not None
+                spec.loader.exec_module(module)
+
+                instance = Path(directory) / "instance.json"
+                instance.write_text('{"event":"Close May"}', encoding="utf-8-sig")
+                self.assertEqual(module._load(instance), {"event": "Close May"})
+            finally:
+                if old_jsonschema is None:
+                    sys.modules.pop("jsonschema", None)
+                else:
+                    sys.modules["jsonschema"] = old_jsonschema
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
