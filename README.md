@@ -1,6 +1,6 @@
 # Claude for Financial Services
 
-> Security-maintained fork of [`anthropics/financial-services`](https://github.com/anthropics/financial-services), based on upstream commit `286f906` (May 26, 2026). This fork preserves the original plugin marketplace and applies fail-closed validation, safe handoff parsing, and secret-log redaction fixes.
+> Security-maintained fork of [`namluu1998/secure-financial-agents`](https://github.com/namluu1998/secure-financial-agents), based on upstream commit `286f906` (May 26, 2026). This fork preserves the original plugin marketplace and applies fail-closed validation, safe handoff parsing, and secret-log redaction fixes.
 
 Reference agents, skills, and data connectors for the financial-services workflows we see most — investment banking, equity research, private equity, and wealth management.
 
