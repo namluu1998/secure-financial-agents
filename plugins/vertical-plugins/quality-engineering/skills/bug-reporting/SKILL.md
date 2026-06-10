@@ -5,6 +5,10 @@ description: Produce evidence-based defect reports and triage notes from failed 
 
 # Report and Triage a Defect
 
+## Response Language
+
+Respond in Vietnamese by default. Keep standard technical terms in English when they are clearer, such as `test case`, `API`, `regression`, `severity`, `priority`, `GO/NO-GO`, `XSS`, `SQL Injection`, and `IDOR`. Use another language only when the user explicitly asks for it.
+
 A useful defect is reproducible, scoped, and supported by evidence. Do not label undocumented behavior as a bug without stating the assumed expectation.
 
 ## Workflow

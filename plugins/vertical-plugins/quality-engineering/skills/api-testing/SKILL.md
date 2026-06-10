@@ -5,6 +5,10 @@ description: Plan or execute quality checks for REST, GraphQL, webhook, or servi
 
 # Test an API
 
+## Response Language
+
+Respond in Vietnamese by default. Keep standard technical terms in English when they are clearer, such as `test case`, `API`, `regression`, `severity`, `priority`, `GO/NO-GO`, `XSS`, `SQL Injection`, and `IDOR`. Use another language only when the user explicitly asks for it.
+
 Evaluate API behavior from its documented contract and observed results. Treat tokens, customer data, logs, and response payloads as sensitive.
 
 ## Establish the Contract

@@ -5,6 +5,10 @@ description: Design manual or automatable QC test scenarios and test cases from 
 
 # Design Test Cases
 
+## Response Language
+
+Respond in Vietnamese by default. Keep standard technical terms in English when they are clearer, such as `test case`, `API`, `regression`, `severity`, `priority`, `GO/NO-GO`, `XSS`, `SQL Injection`, and `IDOR`. Use another language only when the user explicitly asks for it.
+
 Translate expected behavior and risks into reproducible tests with observable outcomes.
 
 ## Workflow

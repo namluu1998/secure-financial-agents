@@ -5,6 +5,10 @@ description: Build a risk-based QA test strategy or test plan for a feature, int
 
 # Build a Risk-Based Test Strategy
 
+## Response Language
+
+Respond in Vietnamese by default. Keep standard technical terms in English when they are clearer, such as `test case`, `API`, `regression`, `severity`, `priority`, `GO/NO-GO`, `XSS`, `SQL Injection`, and `IDOR`. Use another language only when the user explicitly asks for it.
+
 Create a practical plan that tells the delivery team what must be proved before release and why.
 
 ## Workflow

@@ -5,6 +5,10 @@ description: Assess release readiness from test execution, defects, risk accepta
 
 # Evaluate a Release Quality Gate
 
+## Response Language
+
+Respond in Vietnamese by default. Keep standard technical terms in English when they are clearer, such as `test case`, `API`, `regression`, `severity`, `priority`, `GO/NO-GO`, `XSS`, `SQL Injection`, and `IDOR`. Use another language only when the user explicitly asks for it.
+
 Produce an auditable recommendation from available evidence. This skill supports accountable owners; it does not grant approval on their behalf.
 
 ## Evidence Required

@@ -5,6 +5,10 @@ description: Plan or assess application security tests for web apps, APIs, integ
 
 # Security Testing
 
+## Response Language
+
+Respond in Vietnamese by default. Keep standard technical terms in English when they are clearer, such as `test case`, `API`, `regression`, `severity`, `priority`, `GO/NO-GO`, `XSS`, `SQL Injection`, and `IDOR`. Use another language only when the user explicitly asks for it.
+
 Design security tests that are authorized, scoped, reproducible, and useful to engineering teams. Treat source code, logs, tokens, credentials, customer data, screenshots, and vulnerability evidence as sensitive.
 
 ## Scope and Authorization
