@@ -28,6 +28,18 @@ When the feature exposes records, files, reports, invoices, projects, user profi
 - Include least-privilege and deny-by-default cases for unknown roles, missing roles, expired sessions, and users with partial permissions.
 - Confirm suspicious denied attempts are recorded in audit logs without logging secrets or personal data unnecessarily.
 
+## SQL Injection Case Patterns
+
+When the feature accepts search terms, login credentials, identifiers, filters, sort fields, report parameters, or action URLs, include SQL injection cases. Use only authorized test environments and non-destructive payloads; do not run destructive statements such as table drops outside a disposable lab database.
+
+- Login bypass attempts: submit SQL metacharacters, tautology-style input, comment markers, and malformed values in username/password fields. Expected result: authentication fails safely with a generic error.
+- Client-side validation bypass: repeat validation cases with JavaScript disabled or by sending direct API requests. Expected result: server-side validation rejects unsafe input.
+- Search and filter inputs: submit quote characters, boolean conditions, union-like probes, encoded payloads, and long/malformed input. Expected result: results are constrained to legitimate matches, not all rows, and no SQL error detail is exposed.
+- URL and route parameters: alter numeric or string ids in detail pages, report URLs, and query parameters with injection probes. Expected result: safe not-found or denied response, with parameterized handling.
+- Write/delete actions: test action URLs and request bodies with injection probes in ids or filters using mock data only. Expected result: no unintended records are modified or deleted.
+- Permission-sensitive queries: verify injection probes cannot bypass role, tenant, ownership, or row-level constraints.
+- Error and logging checks: verify database errors, query text, stack traces, table names, and sensitive fields are not returned to the user or stored in logs with secrets.
+
 ## Test Case Format
 
 Provide a table with:

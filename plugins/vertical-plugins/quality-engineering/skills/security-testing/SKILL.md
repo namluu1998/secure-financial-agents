@@ -47,6 +47,20 @@ For object-backed features, explicitly test insecure direct object reference and
 
 Expected secure behavior: authorization is enforced on the backend for every object and action, identifiers are not trusted because they came from the client, denial responses do not leak sensitive object details, and suspicious attempts are audit logged.
 
+## SQL Injection
+
+For database-backed features, explicitly test SQL injection paths using authorized environments and non-destructive probes:
+
+- Authentication forms: test username and password fields with quotes, comments, tautology-style probes, malformed encodings, and mixed valid/invalid credentials. Authentication must fail safely and not reveal whether the SQL syntax changed.
+- Search boxes and filters: test free-text search, advanced filters, sort fields, pagination, and report parameters. Results must remain scoped to the user's query, role, tenant, and permissions.
+- Detail, view, and report URLs: test ids and query parameters used to fetch records, such as news/report ids, project ids, account ids, and document ids. The app must return safe not-found or denied responses without database errors.
+- Write and delete endpoints: test ids, filters, and action parameters against disposable data only. The app must not modify or delete unintended rows.
+- Permission checks: verify injection probes cannot turn a restricted query into an unrestricted query or bypass row-level security.
+- Error handling: confirm SQL errors, stack traces, query fragments, table names, column names, and connection details are not exposed in UI/API responses.
+- Logging and monitoring: confirm rejected probes are audit logged at an appropriate level without storing credentials, raw secrets, or excessive personal data.
+
+Prefer parameterized-query and ORM-safe remediation guidance. When documenting evidence, show only minimal sanitized payload summaries and avoid destructive examples unless the test was run in an isolated lab.
+
 ## Evidence and Reporting
 
 For each test, specify:
