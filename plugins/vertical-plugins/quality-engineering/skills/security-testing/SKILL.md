@@ -61,6 +61,45 @@ For database-backed features, explicitly test SQL injection paths using authoriz
 
 Prefer parameterized-query and ORM-safe remediation guidance. When documenting evidence, show only minimal sanitized payload summaries and avoid destructive examples unless the test was run in an isolated lab.
 
+## OS Command Injection
+
+For features that call operating-system commands or wrappers, test whether user input can alter the intended command:
+
+- Target fields: ping/check-host endpoints, file paths, conversion jobs, archive/extract features, import/export actions, diagnostics, and admin utilities.
+- Injection operators: probe command chaining, pipes, conditional execution, subshell syntax, background execution, redirection, append, and newline encodings with benign markers only.
+- API variants: test the same cases through JSON bodies, query strings, headers, multipart fields, and hidden UI fields.
+- Output handling: verify command output, usernames, hostnames, environment data, filesystem paths, and shell errors are not returned to the client.
+- File side effects: verify redirection cannot create or overwrite files, and append operations cannot write repeated command output.
+- Timing and background behavior: use only short approved timing probes to verify the request does not execute unintended background commands.
+- Platform handling: include Windows escape-character and Unix shell metacharacter variants when relevant.
+
+Expected secure behavior: user input is passed as validated arguments, not shell text; target values are allowlisted; unsafe characters are rejected; and the system performs only the intended operation.
+
+## Template Injection
+
+For features that render user input through templates, test whether template syntax is interpreted:
+
+- Expression evaluation: submit arithmetic-like expressions, variable references, and template delimiters through API and UI fields.
+- Configuration access: verify input cannot read config, request/session objects, environment values, headers, internal classes, or secret-like fields.
+- Control structures: verify loops, conditionals, filters, macros, and nested expressions are not executed from untrusted content.
+- Email and notification templates: verify user-controlled template fields support only documented placeholders, with unknown placeholders rejected or rendered safely.
+- Error handling: verify template errors do not expose engine type, stack traces, file paths, class names, or sensitive variables.
+
+Expected secure behavior: untrusted content is rendered as literal text or sanitized allowed markup, and only trusted templates can execute template logic.
+
+## XSS
+
+For user-controlled content rendered in browsers, test reflected, stored, and DOM-based XSS:
+
+- Text fields and search: submit script-like strings, encoded variants, nested tags, malformed markup, and harmless event-handler probes to textboxes, search boxes, comments, names, bios, and descriptions.
+- URL and route parameters: test fragments, query parameters, and deep links that are echoed into pages, errors, redirects, or client-side state.
+- Stored content: verify comments, messages, rich text, uploaded metadata, and notification content remain safe when reopened by other users.
+- HTML and rich text controls: verify only approved tags and attributes are allowed; scripts, event handlers, JavaScript URLs, iframes, and unsafe embeds are blocked.
+- Context-specific output encoding: verify escaping is appropriate for HTML body, HTML attribute, JavaScript string, URL, CSS, and JSON contexts.
+- Defense in depth: check CSP, HttpOnly/Secure/SameSite cookie flags, and avoidance of unsafe inline script where applicable.
+
+Expected secure behavior: no script executes, unsafe markup is encoded or removed, allowed rich text is constrained by policy, and raw user HTML is never rendered unless explicitly trusted and sanitized.
+
 ## Evidence and Reporting
 
 For each test, specify:

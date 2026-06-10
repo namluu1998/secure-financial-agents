@@ -40,6 +40,39 @@ When the feature accepts search terms, login credentials, identifiers, filters, 
 - Permission-sensitive queries: verify injection probes cannot bypass role, tenant, ownership, or row-level constraints.
 - Error and logging checks: verify database errors, query text, stack traces, table names, and sensitive fields are not returned to the user or stored in logs with secrets.
 
+## OS Command Injection Case Patterns
+
+When a feature invokes system utilities, diagnostics, file conversion, ping/check endpoints, archive tools, or background jobs, include command injection cases. Use isolated test environments and benign marker commands only; never write cases that delete files, alter permissions, exfiltrate data, or run against production.
+
+- Command separators: submit safe probes containing shell metacharacters such as command chaining, pipes, conditional execution, subshell syntax, background execution, and newline encodings.
+- JSON/API inputs: repeat probes through POST bodies, query parameters, headers, and hidden fields, not only the UI.
+- Redirection attempts: verify output redirection and append operators cannot create or modify files from user input.
+- Delay probes: use short, bounded timing probes only in approved test environments to detect unintended blocking/background execution.
+- Windows and Unix variants: cover platform-specific separators and escape characters where the deployment OS is known.
+- Expected result: the application performs only the intended function, rejects invalid target values, uses allowlisted arguments, and does not return command output, environment details, filesystem paths, or shell errors.
+
+## Template Injection Case Patterns
+
+When user-controlled content is rendered through email templates, admin notes, notifications, reports, CMS fields, or server-side template engines, include template injection cases:
+
+- Expression handling: submit arithmetic-like, variable-like, and template-delimiter strings and verify they render as literal text or are rejected safely.
+- Config and secret references: verify user input cannot access configuration objects, environment variables, request objects, headers, session data, or secret-like values.
+- Loop/control syntax: verify template loops, conditionals, filters, and macros in user content are not executed.
+- Nested expressions: test nested or encoded template delimiters through both API and UI entry points.
+- Allowlist fields: where templates intentionally support variables, verify only documented placeholders are accepted and unknown variables fail safely.
+- Expected result: no expression evaluation from untrusted input, no internal class/object names, no stack traces, and no leakage of configuration or user data.
+
+## XSS Case Patterns
+
+When a feature displays user-controlled text in HTML, JavaScript, URLs, attributes, rich text, comments, profiles, search results, or notifications, include XSS cases:
+
+- Reflected input: verify search terms, URL fragments, query parameters, validation errors, and form echoes are encoded for the rendering context.
+- Stored input: verify comments, descriptions, bios, messages, uploaded metadata, and notification templates cannot execute script when viewed later by the same or another user.
+- Encoded and nested input: test HTML-encoded, URL-encoded, mixed-case, nested tag, and malformed markup variants.
+- HTML and rich text: verify allowed tags/attributes are allowlisted and dangerous tags, event handlers, JavaScript URLs, iframes, and inline script are blocked or sanitized.
+- Context-specific escaping: verify output encoding is correct for HTML body, attribute, JavaScript string, URL, and JSON contexts.
+- Expected result: input is displayed as safe text or sanitized allowed markup, no alert/script execution occurs, and CSP/cookie flags provide defense in depth.
+
 ## Test Case Format
 
 Provide a table with:
