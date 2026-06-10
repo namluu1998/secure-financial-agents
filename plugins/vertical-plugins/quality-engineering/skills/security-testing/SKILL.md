@@ -32,6 +32,21 @@ Build coverage from the feature's trust boundaries and data flows. Include relev
 - Infrastructure and dependency risk: vulnerable packages, exposed admin surfaces, misconfigured storage, SSRF paths, and overly broad service permissions.
 - AI or agent workflows: prompt injection boundaries, untrusted document handling, tool permission separation, schema validation, and human approval gates.
 
+## IDOR and Broken Access Control
+
+For object-backed features, explicitly test insecure direct object reference and missing access-control checks:
+
+- URL tampering: change path, query, route, or filename identifiers to another valid-looking object, such as a different contract, report, project, profile, or invoice.
+- API object swap: repeat a valid request with another `userId`, `accountId`, `projectId`, `invoiceId`, document id, tenant id, or composite identifier.
+- Cross-user and cross-tenant reads: verify that users cannot view another user's profile, salary-like data, private project material, internal report, or uploaded file.
+- Unauthorized downloads: verify direct file links and generated document URLs require server-side authorization on every request.
+- Unauthorized writes: verify update/delete operations are denied when the actor does not own or administer the target object, including nested routes like `/users/{userId}/invoices/{invoiceId}`.
+- Force browsing: request authenticated pages or API routes directly without following the UI flow, with missing roles, downgraded roles, or expired sessions.
+- Metadata manipulation: alter client-controlled role, owner, tenant, workflow state, or approval metadata and verify the backend ignores or rejects it.
+- Least privilege and deny by default: verify unknown, newly created, disabled, or partially provisioned users receive no access until explicit permissions are assigned.
+
+Expected secure behavior: authorization is enforced on the backend for every object and action, identifiers are not trusted because they came from the client, denial responses do not leak sensitive object details, and suspicious attempts are audit logged.
+
 ## Evidence and Reporting
 
 For each test, specify:

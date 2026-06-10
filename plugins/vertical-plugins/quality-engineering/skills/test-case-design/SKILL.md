@@ -16,6 +16,18 @@ Translate expected behavior and risks into reproducible tests with observable ou
 
 Never use real credentials, production personal data, or irreversible production actions in test instructions.
 
+## Access-Control Case Patterns
+
+When the feature exposes records, files, reports, invoices, projects, user profiles, or other object identifiers, include IDOR and ownership cases:
+
+- Modify URL, route, query, body, or file identifiers to reference another user's object.
+- Attempt view, download, update, and delete actions on objects owned by a different user, tenant, account, project, or role.
+- Verify that hidden UI controls are not the only protection; direct API calls and deep links must be denied by the backend.
+- Check sequential, guessable, or user-controlled identifiers such as `contract_1234`, `projectId=2025`, `userId`, and `invoiceId`.
+- Confirm unauthorized access returns a safe denial response without exposing object existence, sensitive fields, internal paths, or stack traces.
+- Include least-privilege and deny-by-default cases for unknown roles, missing roles, expired sessions, and users with partial permissions.
+- Confirm suspicious denied attempts are recorded in audit logs without logging secrets or personal data unnecessarily.
+
 ## Test Case Format
 
 Provide a table with:
