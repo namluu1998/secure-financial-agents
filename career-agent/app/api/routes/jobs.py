@@ -6,22 +6,31 @@ from app.database import get_db
 from app.models.candidate import CareerDNA
 from app.models.job import Job
 from app.agents.orchestrator import CareerOrchestrator
-from app.schemas.job import JobCreate, JobMatchResponse
 
 router = APIRouter()
-orchestrator = CareerOrchestrator()
 
 
-@router.post("/", summary="Add a job to the database")
-async def create_job(data: JobCreate, db: AsyncSession = Depends(get_db)):
-    job = Job(**data.model_dump())
+@router.post("/", summary="Thêm job vào database")
+async def create_job(data: dict, db: AsyncSession = Depends(get_db)):
+    job = Job(
+        title=data["title"],
+        company=data["company"],
+        description=data["description"],
+        location=data.get("location"),
+        remote_policy=data.get("remote_policy"),
+        salary_min=data.get("salary_min"),
+        salary_max=data.get("salary_max"),
+        currency=data.get("currency", "USD"),
+        source=data.get("source"),
+        external_id=data.get("external_id"),
+    )
     db.add(job)
     await db.commit()
     await db.refresh(job)
     return {"job_id": job.id, "title": job.title, "company": job.company}
 
 
-@router.post("/match/{candidate_id}", summary="Match jobs to candidate Career DNA")
+@router.post("/match/{candidate_id}", summary="Claude tự tìm và match jobs cho candidate")
 async def match_jobs(
     candidate_id: str,
     preferences: dict = {},
@@ -30,27 +39,32 @@ async def match_jobs(
     dna_result = await db.execute(select(CareerDNA).where(CareerDNA.candidate_id == candidate_id))
     dna = dna_result.scalar_one_or_none()
     if not dna:
-        raise HTTPException(404, "Career DNA not found — upload a CV first")
+        raise HTTPException(404, "Career DNA chưa có — hãy upload CV trước")
 
-    jobs_result = await db.execute(select(Job).where(Job.is_active == True).limit(100))
-    jobs = jobs_result.scalars().all()
-    if not jobs:
-        raise HTTPException(404, "No jobs in database — add jobs first")
+    career_dna = json.loads(dna.raw_json)
+    orchestrator = CareerOrchestrator(db)
 
-    jobs_data = [
-        {
-            "job_id": j.id,
-            "title": j.title,
-            "company": j.company,
-            "location": j.location,
-            "remote_policy": j.remote_policy,
-            "salary_min": j.salary_min,
-            "salary_max": j.salary_max,
-            "description": j.description[:2000],  # cap to manage token cost
-        }
-        for j in jobs
-    ]
+    pref_text = ""
+    if preferences:
+        pref_text = f"\nPreferences: {json.dumps(preferences, ensure_ascii=False)}"
 
-    matches = await orchestrator.run_job_matching(json.loads(dna.raw_json), jobs_data, preferences)
-    matches.sort(key=lambda x: x.get("match_score", 0), reverse=True)
-    return {"candidate_id": candidate_id, "matches": matches}
+    response = await orchestrator.run(
+        task=f"Tìm jobs phù hợp cho candidate {candidate_id} và tính match score cho từng job. "
+             f"Dùng tool query_jobs để lấy danh sách, sau đó phân tích và lưu kết quả bằng save_match_result.{pref_text}",
+        context={
+            "candidate_id": candidate_id,
+            "career_dna_summary": {
+                "seniority": career_dna.get("seniority_level"),
+                "skills": [s["skill"] for s in career_dna.get("hard_skills", [])[:8]],
+                "current_title": career_dna.get("current_title"),
+                "market_value": career_dna.get("market_value_usd_range"),
+            },
+        },
+    )
+
+    return {
+        "candidate_id": candidate_id,
+        "agent_response": response.get("result"),
+        "matches": response.get("matches", []),
+        "mode": response.get("mode"),
+    }

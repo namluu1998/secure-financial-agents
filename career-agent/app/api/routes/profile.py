@@ -1,40 +1,35 @@
 import json
-from datetime import date
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
 from app.models.candidate import Candidate, CareerDNA
 from app.agents.orchestrator import CareerOrchestrator
-from app.schemas.candidate import CandidateCreate, CareerDNAResponse
 
 router = APIRouter()
-orchestrator = CareerOrchestrator()
 
 
-@router.post("/", summary="Create candidate profile")
-async def create_candidate(data: CandidateCreate, db: AsyncSession = Depends(get_db)):
-    candidate = Candidate(email=data.email, full_name=data.full_name)
+@router.post("/", summary="Tạo hồ sơ candidate")
+async def create_candidate(data: dict, db: AsyncSession = Depends(get_db)):
+    candidate = Candidate(email=data["email"], full_name=data.get("full_name"))
     db.add(candidate)
     await db.commit()
     await db.refresh(candidate)
     return {"candidate_id": candidate.id, "email": candidate.email}
 
 
-@router.post("/{candidate_id}/upload-cv", summary="Upload CV and build Career DNA")
+@router.post("/{candidate_id}/upload-cv", summary="Upload CV — Claude tự phân tích và xây dựng Career DNA")
 async def upload_cv(
     candidate_id: str,
     file: UploadFile = File(...),
     db: AsyncSession = Depends(get_db),
 ):
     result = await db.execute(select(Candidate).where(Candidate.id == candidate_id))
-    candidate = result.scalar_one_or_none()
-    if not candidate:
-        raise HTTPException(404, "Candidate not found")
+    if not result.scalar_one_or_none():
+        raise HTTPException(404, "Candidate không tồn tại")
 
     content = await file.read()
-    # Basic text extraction — for PDFs use pypdf, for txt read directly
-    if file.filename.endswith(".pdf"):
+    if file.filename and file.filename.endswith(".pdf"):
         from pypdf import PdfReader
         import io
         reader = PdfReader(io.BytesIO(content))
@@ -42,33 +37,31 @@ async def upload_cv(
     else:
         cv_text = content.decode("utf-8", errors="ignore")
 
-    dna_data = await orchestrator.run_career_dna(candidate_id, cv_text)
+    orchestrator = CareerOrchestrator(db)
+    response = await orchestrator.run(
+        task=f"Phân tích CV sau và xây dựng Career DNA cho candidate {candidate_id}. "
+             f"Sau khi phân tích xong, lưu vào database bằng tool save_career_dna.",
+        context={"candidate_id": candidate_id, "cv_text": cv_text},
+    )
 
-    # Upsert Career DNA
-    result = await db.execute(select(CareerDNA).where(CareerDNA.candidate_id == candidate_id))
-    dna = result.scalar_one_or_none()
-    if dna is None:
-        dna = CareerDNA(candidate_id=candidate_id)
-        db.add(dna)
+    # Đọc lại từ DB để trả về
+    dna_result = await db.execute(select(CareerDNA).where(CareerDNA.candidate_id == candidate_id))
+    dna = dna_result.scalar_one_or_none()
+    career_dna = json.loads(dna.raw_json) if dna else {}
 
-    dna.snapshot_date = str(date.today())
-    dna.current_title = dna_data.get("current_title")
-    dna.seniority_level = dna_data.get("seniority_level")
-    dna.years_of_experience = dna_data.get("years_of_experience")
-    dna.career_score = dna_data.get("career_score", {}).get("total")
-    market = dna_data.get("market_value_usd_range", {})
-    dna.market_value_min = market.get("min")
-    dna.market_value_max = market.get("max")
-    dna.raw_json = json.dumps(dna_data, ensure_ascii=False)
-
-    await db.commit()
-    return {"candidate_id": candidate_id, "career_score": dna.career_score, "career_dna": dna_data}
+    return {
+        "candidate_id": candidate_id,
+        "career_score": dna.career_score if dna else None,
+        "agent_response": response.get("result"),
+        "mode": response.get("mode"),
+        "career_dna": career_dna,
+    }
 
 
-@router.get("/{candidate_id}/career-dna", summary="Get Career DNA")
+@router.get("/{candidate_id}/career-dna", summary="Xem Career DNA")
 async def get_career_dna(candidate_id: str, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(CareerDNA).where(CareerDNA.candidate_id == candidate_id))
     dna = result.scalar_one_or_none()
     if not dna:
-        raise HTTPException(404, "Career DNA not found — upload a CV first")
+        raise HTTPException(404, "Career DNA chưa có — hãy upload CV trước")
     return json.loads(dna.raw_json)
