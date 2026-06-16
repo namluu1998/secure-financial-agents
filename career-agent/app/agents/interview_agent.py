@@ -1,15 +1,20 @@
 import json
-import anthropic
+from app.config import settings
 from app.core.prompt_templates import INTERVIEW_PREP_SYSTEM
 
 
 class InterviewAgent:
     def __init__(self, model: str):
-        self.client = anthropic.AsyncAnthropic()
         self.model = model
 
     async def run(self, career_dna: dict, job: dict, interview_type: str) -> dict:
-        response = await self.client.messages.create(
+        if settings.mock_mode:
+            from app.agents.mock_responses import interview_prep_mock
+            return interview_prep_mock(job, interview_type)
+
+        import anthropic
+        client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+        response = await client.messages.create(
             model=self.model,
             max_tokens=8192,
             system=INTERVIEW_PREP_SYSTEM,

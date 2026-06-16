@@ -1,16 +1,21 @@
 import json
 from datetime import date
-import anthropic
+from app.config import settings
 from app.core.prompt_templates import CAREER_DNA_SYSTEM
 
 
 class CareerDNAAgent:
     def __init__(self, model: str):
-        self.client = anthropic.AsyncAnthropic()
         self.model = model
 
     async def run(self, candidate_id: str, cv_text: str) -> dict:
-        response = await self.client.messages.create(
+        if settings.mock_mode:
+            from app.agents.mock_responses import career_dna_mock
+            return career_dna_mock(candidate_id)
+
+        import anthropic
+        client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+        response = await client.messages.create(
             model=self.model,
             max_tokens=4096,
             system=CAREER_DNA_SYSTEM,
@@ -22,7 +27,6 @@ class CareerDNAAgent:
             ],
         )
         text = response.content[0].text
-        # Extract JSON from response
         start = text.find("{")
         end = text.rfind("}") + 1
         return json.loads(text[start:end])

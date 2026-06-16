@@ -26,8 +26,13 @@ app.include_router(salary.router, prefix="/salary", tags=["Salary"])
 @app.on_event("startup")
 async def startup():
     await create_tables()
+    from app.config import settings
+    import sys
+    mode = "MOCK (no API key)" if settings.mock_mode else "LIVE (Claude)"
+    print(f"\n{'='*50}\n  Career Agent API — {mode}\n{'='*50}\n", file=sys.stderr)
 
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    from app.config import settings
+    return {"status": "ok", "mode": "mock" if settings.mock_mode else "live"}

@@ -1,16 +1,21 @@
 import json
-import anthropic
+from app.config import settings
 from app.core.prompt_templates import JOB_MATCHER_SYSTEM
 
 
 class JobMatcherAgent:
     def __init__(self, model: str):
-        self.client = anthropic.AsyncAnthropic()
         self.model = model
 
     async def run(self, career_dna: dict, jobs: list[dict], preferences: dict) -> list[dict]:
+        if settings.mock_mode:
+            from app.agents.mock_responses import job_matching_mock
+            return job_matching_mock(jobs)
+
+        import anthropic
+        client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
         jobs_text = json.dumps(jobs, ensure_ascii=False)
-        response = await self.client.messages.create(
+        response = await client.messages.create(
             model=self.model,
             max_tokens=8192,
             system=JOB_MATCHER_SYSTEM,

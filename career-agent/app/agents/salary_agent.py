@@ -1,15 +1,20 @@
 import json
-import anthropic
+from app.config import settings
 from app.core.prompt_templates import SALARY_BENCHMARK_SYSTEM
 
 
 class SalaryAgent:
     def __init__(self, model: str):
-        self.client = anthropic.AsyncAnthropic()
         self.model = model
 
     async def run(self, career_dna: dict, offer: dict) -> dict:
-        response = await self.client.messages.create(
+        if settings.mock_mode:
+            from app.agents.mock_responses import salary_benchmark_mock
+            return salary_benchmark_mock(offer)
+
+        import anthropic
+        client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+        response = await client.messages.create(
             model=self.model,
             max_tokens=4096,
             system=SALARY_BENCHMARK_SYSTEM,
