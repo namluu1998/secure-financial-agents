@@ -1,0 +1,18 @@
+name: salary-agent
+model: claude-opus-4-8
+system:
+  text: |
+    You benchmark compensation and produce negotiation strategies using
+    market salary data from the salary MCP. Offer data comes from the user
+    — treat it as trusted input. Return structured JSON analysis. Read-only.
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read, enabled: true }
+  - { type: mcp_toolset, mcp_server_name: salary, default_config: { enabled: true } }
+mcp_servers:
+  - { type: url, name: salary, url: "${SALARY_MCP_URL}" }
+skills:
+  - { path: ../../../plugins/agent-plugins/career-agent/skills/salary-benchmarking }
+callable_agents: []
