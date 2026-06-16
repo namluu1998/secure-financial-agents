@@ -1,14 +1,23 @@
 """
 Career Orchestrator — entry point duy nhất cho tất cả tasks.
-Khởi tạo CareerAgent với DB session và route task tới đó.
+
+- Mock mode (không có API key): dùng CareerAgent với mock responses
+- Live mode (có API key): dùng MultiAgentCareerOrchestrator
+  Orchestrator Opus → gọi sub-agents Haiku chuyên biệt
 """
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.agents.career_agent import CareerAgent
+from app.config import settings
 
 
 class CareerOrchestrator:
     def __init__(self, db: AsyncSession):
-        self.agent = CareerAgent(db)
+        self.db = db
 
     async def run(self, task: str, context: dict | None = None) -> dict:
-        return await self.agent.run(task, context)
+        if settings.mock_mode:
+            from app.agents.career_agent import CareerAgent
+            return await CareerAgent(self.db).run(task, context)
+
+        from app.agents.multi_agent import MultiAgentCareerOrchestrator
+        return await MultiAgentCareerOrchestrator(self.db).run(task, context)
+

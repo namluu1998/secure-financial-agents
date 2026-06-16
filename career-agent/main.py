@@ -28,11 +28,39 @@ async def startup():
     await create_tables()
     from app.config import settings
     import sys
-    mode = "MOCK (no API key)" if settings.mock_mode else "LIVE (Claude)"
-    print(f"\n{'='*50}\n  Career Agent API — {mode}\n{'='*50}\n", file=sys.stderr)
+    if settings.mock_mode:
+        mode = "MOCK (no API key)"
+    else:
+        mode = "LIVE — Multi-Agent (Opus orchestrator + Haiku sub-agents)"
+    print(f"\n{'='*60}\n  Career Agent API — {mode}\n{'='*60}\n", file=sys.stderr)
 
 
 @app.get("/health")
 async def health():
     from app.config import settings
-    return {"status": "ok", "mode": "mock" if settings.mock_mode else "live"}
+    return {"status": "ok", "mode": "mock" if settings.mock_mode else "multi-agent"}
+
+
+@app.get("/agent/info", tags=["System"])
+async def agent_info():
+    from app.config import settings
+    if settings.mock_mode:
+        return {"mode": "mock", "description": "Không có API key — dùng mock responses"}
+    return {
+        "mode": "multi-agent",
+        "architecture": {
+            "orchestrator": {
+                "model": settings.orchestrator_model,
+                "role": "Điều phối workflow, quyết định gọi sub-agent nào",
+            },
+            "sub_agents": [
+                {"name": "career_dna_agent",   "model": "claude-haiku-4-5-20251001", "task": "Phân tích CV → Career DNA JSON"},
+                {"name": "job_matcher_agent",   "model": "claude-haiku-4-5-20251001", "task": "Tính Match Score cho jobs"},
+                {"name": "resume_tailor_agent", "model": "claude-haiku-4-5-20251001", "task": "Viết resume + cover letter"},
+                {"name": "interview_agent",     "model": "claude-haiku-4-5-20251001", "task": "Tạo briefing pack phỏng vấn"},
+                {"name": "salary_agent",        "model": "claude-haiku-4-5-20251001", "task": "Benchmark lương + thương lượng"},
+            ],
+            "db_tools": ["query_jobs", "save_career_dna", "save_match_result", "save_resume"],
+            "routing": "Sub-agents không gọi nhau — mọi điều phối qua Orchestrator",
+        },
+    }
