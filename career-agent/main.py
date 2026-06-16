@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import create_tables
-from app.api.routes import profile, jobs, resume, interview, salary
+from app.api.routes import profile, jobs, resume, interview, salary, review
 
 app = FastAPI(
     title="Career Agent API",
@@ -21,6 +21,7 @@ app.include_router(jobs.router, prefix="/jobs", tags=["Job Matching"])
 app.include_router(resume.router, prefix="/resume", tags=["Resume"])
 app.include_router(interview.router, prefix="/interview", tags=["Interview"])
 app.include_router(salary.router, prefix="/salary", tags=["Salary"])
+app.include_router(review.router, prefix="/review", tags=["Human Review"])
 
 
 @app.on_event("startup")

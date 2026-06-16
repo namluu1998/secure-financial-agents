@@ -112,7 +112,7 @@ async def save_match_result(
 
     app.match_score = match_score
     app.match_analysis_json = json.dumps(match_json, ensure_ascii=False)
-    app.status = "matched"
+    app.status = "pending_review"
     await db.commit()
     return {"saved": True, "application_id": app.id}
 
