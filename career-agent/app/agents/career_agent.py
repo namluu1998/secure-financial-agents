@@ -130,7 +130,54 @@ class CareerAgent:
         """Mock mode: mô phỏng agentic loop, không gọi Claude."""
         task_lower = task.lower()
 
-        if "career dna" in task_lower or "cv" in task_lower or "hồ sơ" in task_lower:
+        # Thứ tự kiểm tra: cụ thể nhất trước
+        if "save_resume" in task_lower or "viết resume" in task_lower or "cover letter" in task_lower:
+            candidate_id = context.get("candidate_id", "mock-001")
+            job_id = context.get("job_id", "mock-job")
+            dna = await get_career_dna(self.db, candidate_id) or {}
+            from app.agents.mock_responses import resume_tailor_mock
+            result = resume_tailor_mock(dna, context.get("job", {}))
+            await save_resume(
+                self.db, candidate_id, job_id,
+                result["resume_markdown"], result["cover_letter_markdown"],
+                result.get("ats_score_estimate", 80),
+            )
+            return {
+                "result": f"[MOCK] Đã viết resume và cover letter (ATS score: {result.get('ats_score_estimate', 80)}/100).",
+                "resume_markdown": result["resume_markdown"],
+                "cover_letter_markdown": result["cover_letter_markdown"],
+                "ats_score_estimate": result.get("ats_score_estimate", 80),
+                "mode": "mock",
+            }
+
+        if "phỏng vấn" in task_lower or "interview" in task_lower:
+            from app.agents.mock_responses import interview_prep_mock
+            briefing = interview_prep_mock(context.get("job", {}), context.get("interview_type", "behavioural"))
+            return {
+                "result": f"[MOCK] Interview Readiness Score: {briefing['interview_readiness_score']}/100\n"
+                          f"Đã tạo {len(briefing['questions'])} câu hỏi dự đoán.",
+                "briefing": briefing,
+                "mode": "mock",
+            }
+
+        if "lương" in task_lower or "salary" in task_lower or "offer" in task_lower or "thương lượng" in task_lower:
+            from app.agents.mock_responses import salary_benchmark_mock
+            offer = context.get("offer", {})
+            analysis = salary_benchmark_mock(offer)
+            benchmarks = get_salary_benchmarks(
+                context.get("title", "Software Engineer"),
+                context.get("seniority", "senior"),
+                context.get("location", context.get("candidate_profile", {}).get("location", "Ho Chi Minh City")),
+            )
+            return {
+                "result": f"[MOCK] Offer ở mức P{analysis['offer_percentile']} — {analysis['assessment']}\n"
+                          f"Target ask: ${analysis['negotiation_strategy']['target_ask']:,}/tháng",
+                "analysis": analysis,
+                "market_benchmarks": benchmarks,
+                "mode": "mock",
+            }
+
+        if "career dna" in task_lower or "cv" in task_lower or "hồ sơ" in task_lower or "phân tích cv" in task_lower:
             from app.agents.mock_responses import career_dna_mock
             candidate_id = context.get("candidate_id", "mock-001")
             dna = career_dna_mock(candidate_id)
@@ -146,7 +193,7 @@ class CareerAgent:
                 "mode": "mock",
             }
 
-        if "match" in task_lower or "job" in task_lower or "việc" in task_lower:
+        if "match" in task_lower or "tìm jobs" in task_lower or "việc" in task_lower:
             jobs = await query_jobs(self.db)
             if not jobs:
                 return {"result": "[MOCK] Chưa có job trong database. Hãy thêm jobs trước.", "mode": "mock"}
@@ -164,44 +211,5 @@ class CareerAgent:
                 "mode": "mock",
             }
 
-        if "resume" in task_lower or "cv" in task_lower:
-            candidate_id = context.get("candidate_id", "mock-001")
-            job_id = context.get("job_id", "mock-job")
-            dna = await get_career_dna(self.db, candidate_id) or {}
-            from app.agents.mock_responses import resume_tailor_mock
-            result = resume_tailor_mock(dna, context.get("job", {}))
-            await save_resume(
-                self.db, candidate_id, job_id,
-                result["resume_markdown"], result["cover_letter_markdown"],
-                result.get("ats_score_estimate", 80),
-            )
-            return {"result": "[MOCK] Đã tạo resume và cover letter.", **result, "mode": "mock"}
-
-        if "interview" in task_lower or "phỏng vấn" in task_lower:
-            from app.agents.mock_responses import interview_prep_mock
-            briefing = interview_prep_mock(context.get("job", {}), context.get("interview_type", "behavioural"))
-            return {
-                "result": f"[MOCK] Interview Readiness Score: {briefing['interview_readiness_score']}/100\n"
-                          f"Đã tạo {len(briefing['questions'])} câu hỏi dự đoán.",
-                "briefing": briefing,
-                "mode": "mock",
-            }
-
-        if "salary" in task_lower or "lương" in task_lower or "offer" in task_lower:
-            from app.agents.mock_responses import salary_benchmark_mock
-            offer = context.get("offer", {})
-            analysis = salary_benchmark_mock(offer)
-            benchmarks = get_salary_benchmarks(
-                context.get("title", "Software Engineer"),
-                context.get("seniority", "senior"),
-                context.get("location", "Ho Chi Minh City"),
-            )
-            return {
-                "result": f"[MOCK] Offer ở mức P{analysis['offer_percentile']} — {analysis['assessment']}\n"
-                          f"Target ask: ${analysis['negotiation_strategy']['target_ask']:,}/tháng",
-                "analysis": analysis,
-                "market_benchmarks": benchmarks,
-                "mode": "mock",
-            }
 
         return {"result": f"[MOCK] Đã nhận task: {task}", "mode": "mock"}
