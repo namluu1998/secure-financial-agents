@@ -2,7 +2,7 @@
 
 ## Overview
 
-Hệ thống AI career operating system hoạt động như một headhunter cá nhân. Phân tích Career DNA của ứng viên, tìm và xếp hạng việc làm phù hợp, tối ưu hóa CV, chuẩn bị phỏng vấn, và hỗ trợ thương lượng lương. Nguồn giống plugin [`career-agent`](../../plugins/agent-plugins/career-agent) — thư mục này là Managed Agent cookbook cho `POST /v1/agents`.
+An AI career operating system that acts as a personal headhunter. Analyses a candidate's Career DNA, discovers and ranks matching jobs, tailors resumes, prepares interview briefing packs, and supports salary negotiation. Same source as the [`career-agent`](../../plugins/agent-plugins/career-agent) Cowork plugin — this directory is the Managed Agent cookbook for `POST /v1/agents`.
 
 ## Deploy
 
@@ -15,22 +15,22 @@ export SALARY_MCP_URL=...
 
 ## Steering events
 
-Xem [`steering-examples.json`](./steering-examples.json).
+See [`steering-examples.json`](./steering-examples.json).
 
 ## Security & handoffs
 
-Tài liệu ứng viên là untrusted. Phân tách 5 tầng worker:
+Candidate documents are untrusted. Five-tier worker isolation:
 
-| Worker | Đọc tài liệu untrusted? | Tools | Connectors |
+| Worker | Touches untrusted docs? | Tools | Connectors |
 |---|---|---|---|
-| **`career-dna`** | **Có** | `Read`, `Grep` only | Không có |
-| `job-matcher` | Không | `Read`, `Grep` | jobs (read-only) |
-| `interview-agent` | Không | `Read`, `Grep` | Không có |
-| `salary-agent` | Không | `Read` | salary (read-only) |
-| **`resume-tailor`** (Write-holder) | Không | `Read`, `Write`, `Edit` | Không có |
+| **`career-dna`** | **Yes** | `Read`, `Grep` only | None |
+| `job-matcher` | No | `Read`, `Grep` | jobs (read-only) |
+| `interview-agent` | No | `Read`, `Grep` | None |
+| `salary-agent` | No | `Read` | salary (read-only) |
+| **`resume-tailor`** (Write-holder) | No | `Read`, `Write`, `Edit` | None |
 
-Orchestrator validate output của `career-dna` theo `output_schema` trước khi truyền cho bất kỳ worker nào. `resume-tailor` tạo file vào `./out/resume-<candidate>-<job>-v<n>.md` và `./out/cover-<candidate>-<job>-v<n>.md`.
+The orchestrator validates `career-dna` output against its `output_schema` before any downstream worker receives it. `resume-tailor` produces files in `./out/resume-<candidate>-<job>-v<n>.md` and `./out/cover-<candidate>-<job>-v<n>.md`.
 
-**Auto-apply không được triển khai** trong cookbook này. Mọi việc nộp đơn đều yêu cầu sự đồng ý rõ ràng của người dùng cho từng công việc, được lưu trước khi `apply` được gọi.
+**Auto-apply is not implemented** in this cookbook. Any application submission requires explicit per-job user consent captured and stored before `apply` is invoked.
 
-**Lưu ý:** Career Score và Match Score là ước tính của model — luôn hiển thị khoảng tin cậy và giải thích để ứng viên tự quyết định.
+**Not guaranteed:** Career Score and Match Score are model estimates — surface confidence ranges; always give the candidate the rationale so they can decide.
