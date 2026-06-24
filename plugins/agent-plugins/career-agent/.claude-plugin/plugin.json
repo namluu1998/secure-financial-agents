@@ -1,0 +1,8 @@
+{
+  "name": "career-agent",
+  "version": "0.1.0",
+  "description": "AI career operating system: Career DNA analysis, job matching, resume tailoring, interview prep, and salary negotiation",
+  "author": {
+    "name": "Anthropic FSI"
+  }
+}

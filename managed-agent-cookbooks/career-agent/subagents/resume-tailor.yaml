@@ -1,0 +1,19 @@
+name: resume-tailor
+model: claude-opus-4-8
+system:
+  text: |
+    You are the ONLY worker with Write access. Generate job-specific,
+    ATS-optimised resumes and cover letters from the Career DNA record
+    and match analysis. Write output files to ./out/. Never read candidate
+    source documents directly — work only from the validated Career DNA JSON.
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read,  enabled: true }
+      - { name: write, enabled: true }
+      - { name: edit,  enabled: true }
+mcp_servers: []
+skills:
+  - { path: ../../../plugins/agent-plugins/career-agent/skills/resume-tailoring }
+callable_agents: []
