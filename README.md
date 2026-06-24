@@ -115,8 +115,7 @@ Start with **financial-analysis** — it carries the shared modeling skills and 
 | **[wealth-management](./plugins/vertical-plugins/wealth-management)** | Client reviews, financial plans, rebalancing, reporting, TLH. |
 | **[fund-admin](./plugins/vertical-plugins/fund-admin)** | GL recon, break tracing, accruals, roll-forwards, variance commentary, NAV tie-out. |
 | **[operations](./plugins/vertical-plugins/operations)** | KYC document parsing and rules-grid evaluation. |
-| **[quality-engineering](./plugins/vertical-plugins/quality-engineering)** | QC test planning, test case design, API/security testing, defect reporting, and release gates. |
-| **[frontend-design-sources](./plugins/vertical-plugins/frontend-design-sources)** | Source catalog for Impeccable, Taste, Front-end UI Engineering, and UI/UX Pro Max. |
+| **[quality-engineering](./plugins/vertical-plugins/quality-engineering)** | QC test planning, test case design, API/security testing, defect reporting, release gates, and frontend design skill sources. |
 | **[lseg](./plugins/partner-built/lseg)** *(partner)* | Bond RV, swap curves, FX carry, options vol, macro-rates monitoring on LSEG data. |
 | **[sp-global](./plugins/partner-built/spglobal)** *(partner)* | Tear sheets, earnings previews, funding digests on S&P Capital IQ. |
 
@@ -261,17 +260,9 @@ These are reference templates — they get better when you tune them to how your
 | test-case-design | `/test-cases` | Reproducible functional, negative, boundary, and regression cases |
 | api-testing | `/api-test` | Contract, authorization, validation, reliability, and privacy API checks |
 | security-testing | `/security-test` | Threat-informed app, API, auth, data, and agent security checks |
+| frontend-design-sources | `/frontend-skills` | Recommend source skills and install links for frontend design, UI taste, UI engineering, and UI/UX Pro Max workflows |
 | bug-reporting | `/bug-report` | Evidence-based defect reports and triage guidance |
 | release-quality-gate | `/release-gate` | Evidence-led go or no-go quality recommendation |
-
-</details>
-
-<details>
-<summary><b>frontend-design-sources</b> - frontend design and UI/UX skill sources</summary>
-
-| Skill | Command | Description |
-|---|---|---|
-| frontend-design-sources | `/frontend-skills` | Recommend source skills and install links for frontend design, UI taste, UI engineering, and UI/UX Pro Max workflows |
 
 </details>
 

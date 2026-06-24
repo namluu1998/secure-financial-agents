@@ -53,12 +53,6 @@
       "description": "QC and quality engineering workflows: test planning, test case design, API and security testing, defect triage, and release quality gates"
     },
     {
-      "name": "frontend-design-sources",
-      "displayName": "Frontend Design Sources",
-      "source": "./plugins/vertical-plugins/frontend-design-sources",
-      "description": "Curated source catalog for frontend design, UI taste, frontend UI engineering, and UI/UX Pro Max skills"
-    },
-    {
       "name": "pitch-agent",
       "displayName": "Pitch Agent",
       "source": "./plugins/agent-plugins/pitch-agent",
