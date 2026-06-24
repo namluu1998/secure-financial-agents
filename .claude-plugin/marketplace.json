@@ -50,7 +50,7 @@
       "name": "quality-engineering",
       "displayName": "Quality Engineering",
       "source": "./plugins/vertical-plugins/quality-engineering",
-      "description": "QC and quality engineering workflows: test planning, test case design, API and security testing, defect triage, and release quality gates"
+      "description": "QC and quality engineering workflows: test planning, test case design, API and security testing, defect triage, release quality gates, and frontend design skill sources"
     },
     {
       "name": "pitch-agent",
