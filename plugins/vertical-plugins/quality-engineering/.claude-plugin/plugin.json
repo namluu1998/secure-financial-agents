@@ -1,7 +1,7 @@
 {
   "name": "quality-engineering",
-  "version": "0.1.8",
-  "description": "Quality engineering workflows: risk-based test planning, test case design, API and security testing, defect reporting, release readiness, and frontend design skill source recommendations",
+  "version": "0.1.9",
+  "description": "Quality engineering workflows: risk-based test planning, test case design, API and security testing, defect reporting, concise Vietnamese QC feedback, release readiness, and frontend design skill source recommendations",
   "author": {
     "name": "namluu1998"
   }
