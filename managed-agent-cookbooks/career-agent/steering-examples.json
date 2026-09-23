@@ -1,0 +1,8 @@
+[
+  { "event": "Analyse my CV at ./inputs/cv.pdf and build my Career DNA", "description": "Initial profile onboarding" },
+  { "event": "Find the top 10 matching jobs for candidate CAND-001 in London, targeting senior software engineer roles, salary £90k–£130k", "description": "Job discovery and matching" },
+  { "event": "Tailor my resume and cover letter for job JOB-00452 at Stripe", "description": "Resume tailoring for a specific application" },
+  { "event": "Prepare me for a technical interview at JOB-00452 next Tuesday", "description": "Interview preparation" },
+  { "event": "Evaluate the offer from Stripe: base £115k, 10% bonus, $50k equity over 4 years", "description": "Offer evaluation and negotiation strategy" },
+  { "event": "Compare the two offers: Stripe JOB-00452 vs Revolut JOB-00819", "description": "Multi-offer comparison" }
+]

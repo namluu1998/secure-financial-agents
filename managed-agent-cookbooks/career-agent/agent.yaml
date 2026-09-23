@@ -1,0 +1,32 @@
+# Career Agent — managed-agent cookbook
+
+name: career-agent
+model: claude-opus-4-8
+
+system:
+  file: ../../plugins/agent-plugins/career-agent/agents/career-agent.md
+  append: "You are running headless. Produce files in ./out/; do not assume an open browser or document."
+
+tools:
+  - type: agent_toolset_20260401
+    default_config: { enabled: false }
+    configs:
+      - { name: read,  enabled: true }
+      - { name: grep,  enabled: true }
+      - { name: glob,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: jobs,   default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: salary, default_config: { enabled: true } }
+
+mcp_servers:
+  - { type: url, name: jobs,   url: "${JOBS_MCP_URL}" }
+  - { type: url, name: salary, url: "${SALARY_MCP_URL}" }
+
+skills:
+  - { from_plugin: ../../plugins/agent-plugins/career-agent }
+
+callable_agents:
+  - { manifest: ./subagents/career-dna.yaml }
+  - { manifest: ./subagents/job-matcher.yaml }
+  - { manifest: ./subagents/resume-tailor.yaml }    # only leaf with Write
+  - { manifest: ./subagents/interview-agent.yaml }
+  - { manifest: ./subagents/salary-agent.yaml }

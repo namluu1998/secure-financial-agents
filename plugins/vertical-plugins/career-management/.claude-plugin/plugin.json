@@ -1,0 +1,8 @@
+{
+  "name": "career-management",
+  "version": "0.1.0",
+  "description": "Career management skills: DNA analysis, job matching, resume tailoring, interview prep, and salary benchmarking",
+  "author": {
+    "name": "Anthropic FSI"
+  }
+}
